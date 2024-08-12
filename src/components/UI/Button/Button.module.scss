@@ -1,0 +1,13 @@
+@import '../../../common-styles/variables.scss';
+
+.button {
+  color: $main-gray;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  padding: 10px 20px;
+
+  &:hover {
+    color: $alt-gray;
+  }
+}

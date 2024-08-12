@@ -1,0 +1,14 @@
+@import '../../../common-styles/variables.scss';
+
+.char {
+  color: $main-yellow;
+  border-bottom: 1px solid transparent;
+
+  &.incorrect {
+    color: $red-error;
+
+    &.whitespace {
+      border-bottom-color: $red-error;
+    }
+  }
+}

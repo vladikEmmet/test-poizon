@@ -1,0 +1,9 @@
+@import './common-styles/reset.scss';
+@import './common-styles/variables.scss';
+
+body {
+  width: 100vw;
+  height: 100vh;
+  background: $bg-main;
+  color: $main-gray;
+}

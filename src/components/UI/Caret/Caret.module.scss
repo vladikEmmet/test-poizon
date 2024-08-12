@@ -1,0 +1,12 @@
+@import '../../../common-styles/variables.scss';
+@import '../../../common-styles/animations.scss';
+
+.caret {
+  display: inline-block;
+  width: 2px;
+  position: relative;
+  top: 3px;
+  height: 25px;
+  background: $main-yellow;
+  animation: pulse 1s infinite;
+}
