@@ -6,5 +6,5 @@ export const countErrors = (toEqual: string, expected: string) => {
         if(actualChar !== char) err++;
 
         return err;
-    }, 0)
+    }, 0);
 }

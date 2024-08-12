@@ -1,4 +1,4 @@
-import React, {FC, useMemo} from 'react';
+import React, {FC, useEffect, useMemo} from 'react';
 import styles from './TypedWords.module.scss';
 import {Char} from "../UI/Char/Char";
 import {Caret} from "../UI/Caret/Caret";
@@ -10,6 +10,7 @@ interface TypedWordsProps {
 }
 
 export const TypedWords: FC<TypedWordsProps> = ({input, actualWords, className}) => {
+
     const characters = useMemo(() => {
         return input.split('');
     }, [input]);

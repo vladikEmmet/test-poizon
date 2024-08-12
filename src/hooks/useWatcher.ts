@@ -1,62 +1,75 @@
-import {useCallback, useEffect, useState} from "react";
-import useWords from "./useWords";
-import useTimer from "./useTimer";
+import {useCallback, useEffect} from 'react';
+import useWords from './useWords';
+import useTimer from './useTimer';
+import useInput from './useInput';
+import {GameStatusEnum} from '../types/enums';
+import useGameStore from '../store';
 import {Constants} from "../utils/constants";
-import useInput from "./useInput";
-import {GameStatusEnum} from "../types/enums";
 import {countErrors} from "../utils/countErrors";
 
-const useWatcher =
-    (initialTime: number) => {
-        const [status, setStatus] = useState<GameStatusEnum>(GameStatusEnum.NOT_STARTED);
-        const { timeLeft, startTimer, resetTimer, setNewTime } = useTimer(initialTime);
-        const { words, updateWords } = useWords(Constants.NUMBER_OF_WORDS);
-        const { currentPos, input, totalTyped, resetInput, resetTotalTyped } = useInput(status !== GameStatusEnum.FINISHED);
-        const [errors, setErrors] = useState(0);
-        const isStarting = status === GameStatusEnum.NOT_STARTED && currentPos > 0;
-        const areWordsFinished = currentPos === words.length;
+const useWatcher = (initialTime: number) => {
+    const setStatus = useGameStore((state) => state.setStatus);
+    const status = useGameStore((state) => state.status);
+    const timeLeft = useGameStore((state) => state.time);
+    const setNewTime = useGameStore((state) => state.setTime);
+    const setErrors = useGameStore((state) => state.setErrors);
+    const input = useGameStore((state) => state.input);
+    const errors = useGameStore((state) => state.errors);
+    const words = useGameStore((state) => state.words);
+    const currentPos = useGameStore((state) => state.currentPos);
+    const totalTyped = useGameStore((state) => state.totalTyped);
 
-        const restart = useCallback(() => {
-            resetTimer();
-            resetTotalTyped();
-            setStatus(GameStatusEnum.NOT_STARTED);
-            setErrors(0);
+    const { startTimer, resetTimer } = useTimer(initialTime);
+    const { updateWords } = useWords(Constants.NUMBER_OF_WORDS);
+    const { resetInput, resetTotalTyped } = useInput(status !== GameStatusEnum.FINISHED);
+
+    const isStarting = status === GameStatusEnum.NOT_STARTED && currentPos > 0;
+    const areWordsFinished = currentPos === words.length;
+
+    const restart = useCallback(() => {
+        resetTimer();
+        resetTotalTyped();
+        setStatus(GameStatusEnum.NOT_STARTED);
+        setErrors(0);
+        updateWords();
+        resetInput();
+    }, [resetInput, updateWords, resetTimer, resetTotalTyped, setStatus, setErrors]);
+
+    const sumErrors = useCallback(() => {
+        const wordsReached = words.substring(0, Math.min(currentPos, words.length));
+        const newErrors = countErrors(input, wordsReached);
+        setErrors(errors + newErrors);
+    }, [input, words, currentPos, errors, setErrors]);
+
+
+    useEffect(() => {
+        if (isStarting) {
+            setStatus(GameStatusEnum.STARTED);
+            startTimer();
+        }
+    }, [isStarting, startTimer, setStatus]);
+
+    useEffect(() => {
+        if (!timeLeft && status === GameStatusEnum.STARTED) {
+            sumErrors();
+            setStatus(GameStatusEnum.FINISHED);
+        }
+    }, [timeLeft, status, sumErrors, setStatus]);
+
+    useEffect(() => {
+        if (areWordsFinished) {
+            sumErrors();
             updateWords();
             resetInput();
-        }, [resetInput, updateWords, resetTimer, resetTotalTyped]);
+        }
+    }, [resetInput, areWordsFinished, updateWords, sumErrors]);
 
-        const sumErrors = useCallback(() => {
-            const wordsReached = words.substring(0, Math.min(currentPos, words.length));
-            setErrors((prevErrors) => prevErrors + countErrors(input, wordsReached));
-        }, [input, words, currentPos]);
+    useEffect(() => {
+        setNewTime(initialTime);
+    }, [initialTime, setNewTime]);
 
-        useEffect(() => {
-            if (isStarting) {
-                setStatus(GameStatusEnum.STARTED);
-                startTimer();
-            }
-        }, [isStarting, startTimer]);
-
-        useEffect(() => {
-            if (!timeLeft && status === GameStatusEnum.STARTED) {
-                setStatus(GameStatusEnum.FINISHED);
-                sumErrors();
-            }
-        }, [timeLeft, status, sumErrors]);
-
-        useEffect(() => {
-            if (areWordsFinished) {
-                sumErrors();
-                updateWords();
-                resetInput();
-            }
-        }, [resetInput, areWordsFinished, updateWords, sumErrors]);
-
-        useEffect(() => {
-            setNewTime(initialTime);
-        }, [initialTime, setNewTime]);
-
-        return { status, words, input, errors, restart, timeLeft, totalTyped };
-     };
+    return { status, words, input, errors, restart, timeLeft, totalTyped };
+};
 
 export default useWatcher;
+

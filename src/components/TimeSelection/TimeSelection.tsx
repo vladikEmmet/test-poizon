@@ -8,12 +8,11 @@ interface TimeSelectionProps {
     time: number;
     setTime: (time: number) => void;
     className?: string;
-    status: GameStatusEnum;
 }
 
 const timeOptions = [10, 20, 30, 40, 50, 60];
 
-export const TimeSelection: FC<TimeSelectionProps> = ({time, setTime, className, status}) => {
+export const TimeSelection: FC<TimeSelectionProps> = ({time, setTime, className}) => {
 
     return (
         <div className={cn(styles.container, className)}>

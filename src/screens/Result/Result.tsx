@@ -26,8 +26,6 @@ export const Result: FC<ResultProps> = ({
 }) => {
     if(status !== GameStatusEnum.FINISHED) return null;
 
-    console.log('render');
-
     return (
         <div className={cn(styles.wrapper, className)}>
             <div className='container'>
