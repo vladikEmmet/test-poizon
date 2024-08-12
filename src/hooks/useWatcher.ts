@@ -8,6 +8,7 @@ import {Constants} from "../utils/constants";
 import {countErrors} from "../utils/countErrors";
 
 const useWatcher = (initialTime: number) => {
+    // TODO: сократить объявление переменных (не для тестового)
     const setStatus = useGameStore((state) => state.setStatus);
     const status = useGameStore((state) => state.status);
     const timeLeft = useGameStore((state) => state.time);
@@ -18,7 +19,6 @@ const useWatcher = (initialTime: number) => {
     const words = useGameStore((state) => state.words);
     const currentPos = useGameStore((state) => state.currentPos);
     const totalTyped = useGameStore((state) => state.totalTyped);
-
     const { startTimer, resetTimer } = useTimer(initialTime);
     const { updateWords } = useWords(Constants.NUMBER_OF_WORDS);
     const { resetInput, resetTotalTyped } = useInput(status !== GameStatusEnum.FINISHED);
@@ -26,6 +26,7 @@ const useWatcher = (initialTime: number) => {
     const isStarting = status === GameStatusEnum.NOT_STARTED && currentPos > 0;
     const areWordsFinished = currentPos === words.length;
 
+    // TODO: перенести логику рестарта в store.ts
     const restart = useCallback(() => {
         resetTimer();
         resetTotalTyped();
@@ -35,6 +36,7 @@ const useWatcher = (initialTime: number) => {
         resetInput();
     }, [resetInput, updateWords, resetTimer, resetTotalTyped, setStatus, setErrors]);
 
+    // Подсчитываем ошибки - разница между введенным текстом и сгенерированным (до текущей позиции)
     const sumErrors = useCallback(() => {
         const wordsReached = words.substring(0, Math.min(currentPos, words.length));
         const newErrors = countErrors(input, wordsReached);
@@ -42,6 +44,7 @@ const useWatcher = (initialTime: number) => {
     }, [input, words, currentPos, errors, setErrors]);
 
 
+    // Запускаем таймер при нажатии на клавишу
     useEffect(() => {
         if (isStarting) {
             setStatus(GameStatusEnum.STARTED);
@@ -64,6 +67,7 @@ const useWatcher = (initialTime: number) => {
         }
     }, [resetInput, areWordsFinished, updateWords, sumErrors]);
 
+    // Для настройки времени
     useEffect(() => {
         setNewTime(initialTime);
     }, [initialTime, setNewTime]);

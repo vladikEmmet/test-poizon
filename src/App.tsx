@@ -69,7 +69,10 @@ import {TimeSelection} from "./components/TimeSelection/TimeSelection";
 import {GameStatusEnum} from "./types/enums";
 
 function App() {
+    // Время игры можно установить через TimeSelection
     const [time, setTime] = useState<number>(Constants.GAME_DURATION);
+
+    // useWatcher - хук, который отвечает за логику игры
     const {words, input, timeLeft, errors, status, restart, totalTyped} = useWatcher(time);
 
     return (

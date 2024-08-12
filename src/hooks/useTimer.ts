@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useRef } from 'react';
 import useGameStore from '../store';
 
+// Хук для работы с таймером
 const useTimer = (initialTimeInSeconds: number) => {
     const setTime = useGameStore((state) => state.setTime);
     const time = useGameStore((state) => state.time);
@@ -8,6 +9,7 @@ const useTimer = (initialTimeInSeconds: number) => {
     const isStarted = timerRef.current !== null;
     const isTimeout = time <= 0;
 
+    // Устанавливаем интервал для таймера
     const startTimer = useCallback(() => {
         if (!isStarted && !isTimeout) {
             timerRef.current = setInterval(() => {

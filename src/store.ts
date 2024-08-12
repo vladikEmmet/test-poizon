@@ -3,6 +3,7 @@ import { GameStatusEnum } from './types/enums';
 import { Constants } from './utils/constants';
 import {generateWords} from "./utils/generateWords";
 
+// TODO: добавить нормальную типизацию (не для тестового)
 interface GameState {
     time: number;
     setTime: (time: number | ((prevTime: number) => number)) => void;
@@ -20,6 +21,7 @@ interface GameState {
     setCurrentPos: (currentPos: number | ((prev: number) => number)) => void;
 }
 
+// TODO: добавить рестарт, обновление слов и сброс ошибок (не для тестового)
 const useGameStore = create<GameState>((set) => ({
     time: Constants.GAME_DURATION,
     setTime: (newTime) => set((state) => ({
@@ -32,17 +34,14 @@ const useGameStore = create<GameState>((set) => ({
     errors: 0,
     setErrors: (errors) => set({ errors }),
     input: '',
-    // setInput: (input) => set({ input }),
     setInput: (newInput) => set((state) => ({
         input: typeof newInput === 'function' ? (newInput as (newInput: string) => string)(state.input) : newInput
     })),
     totalTyped: 0,
-    // setTotalTyped: (totalTyped) => set({ totalTyped }),
     setTotalTyped: (newVal) => set((state) => ({
         totalTyped: typeof newVal === 'function' ? (newVal as (newVal: number) => number)(state.totalTyped) : newVal
     })),
     currentPos: 0,
-    // setCurrentPos: (currentPos) => set({ currentPos }),
     setCurrentPos: (newVal) => set((state) => ({
         currentPos: typeof newVal === 'function' ? (newVal as (newVal: number) => number)(state.currentPos) : newVal
     })),

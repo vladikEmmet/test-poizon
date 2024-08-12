@@ -3,6 +3,7 @@ import {Button} from "../Button/Button";
 
 interface ButtonWithBlurProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {}
 
+// Для предотвращения потери фокуса при клике на кнопку
 export const ButtonWithBlur = forwardRef<HTMLButtonElement, ButtonWithBlurProps>(({onClick, ...props}, ref) => {
     const localRef = useRef<HTMLButtonElement>(null);
     const combinedRef = ref || localRef;
